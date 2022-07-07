@@ -1,0 +1,1082 @@
+1: 		:	**********************************
+
+2: 		:	*PROGRAMA DE EJEMPLO
+
+3: 		:	**********************************
+
+4: 		:	PACTL  EQU   $1026
+
+5: 		:	PACNT  EQU   $1027
+
+6: 		:	ADCTL  EQU   $1030
+
+7: 		:	ADR1   EQU   $1031
+
+8: 		:	ADR2   EQU   $1032
+
+9: 		:	ADR3   EQU   $1033
+
+10: 		:	ADR4   EQU   $1034
+
+11: 		:	OPTION EQU   $1039
+
+12: 		:	
+
+13: 		:	PORTA  EQU   $1000
+
+14: 		:	PORTD  EQU   $1008
+
+15: 		:	PORTE  EQU   $100A
+
+16: 		:	PORTG  EQU   $1002
+
+17: 		:	
+
+18: 		:	DDRA   EQU   $1001
+
+19: 		:	DDRD   EQU   $1009
+
+20: 		:	DDRG   EQU   $1003
+
+21: 		:	
+
+22: 		:	TMSK2  EQU   $1024
+
+23: 		:	TFLG2  EQU   $1025
+
+24: 		:	
+
+25: 		:	SCDR   EQU   $102F
+
+26: 		:	SCCR2  EQU   $102D
+
+27: 		:	SCSR   EQU   $102E
+
+28: 		:	SCCR1  EQU   $102C
+
+29: 		:	BAUD   EQU   $102B
+
+30: 		:	HPRIO  EQU   $103C
+
+31: 		:	SPCR   EQU   $1028
+
+32: 		:	CSCTL  EQU   $105D
+
+33: 		:	OPT2   EQU   $1038
+
+34: 		:	EJECUTA EQU  $0020
+
+35: 		:	
+
+36: 		:	
+
+37: 		:	* VARIABLES *********************
+
+38: 		:	
+
+39: 		:	ORDEN  EQU   $000C
+
+40: 		:	SEG    EQU   $000D
+
+41: 		:	U1     EQU   $000E
+
+42: 		:	U2     EQU   $000F
+
+43: 		:	U3     EQU   $0010
+
+44: 		:	U4     EQU   $0011
+
+45: 		:	U5     EQU   $0012
+
+46: 		:	V1     EQU   $0013
+
+47: 		:	V2     EQU   $0014
+
+48: 		:	BAS_H  EQU   $0015
+
+49: 		:	BAS_L  EQU   $0016
+
+50: 		:	V5     EQU   $0017
+
+51: 		:	TEMPO  EQU   $0018
+
+52: 		:	ALTO   EQU   $0019
+
+53: 		:	BAJO   EQU   $001A
+
+54: 		:	BASE_H EQU   $001B
+
+55: 		:	BASE_L EQU   $001C
+
+56: 		:	V3     EQU   $001D
+
+57: 		:	V4     EQU   $001E
+
+58: 		:	EXTRA  EQU   $001F
+
+59: 		:	
+
+60: 		:	**********************************
+
+61: 		:	*CONFIGURA REGISTROS
+
+62: 		:	**********************************
+
+63: 		:	       ORG   $8000   * DIR DE INICIO
+
+64: 8000 (8Eff)		:	       LDS   #$00FF  * APUNTADOR DE STAK
+
+65: 		:	
+
+66: 		:	               
+
+67: 8002 (8600)		:	       LDAA  #$00    * CONFIG TODO EL PUERTO  A COMO ENTRADAS
+
+68: 8004 (B71001)		:	       STAA  DDRA    * EL PUERTO A
+
+69: 		:	       
+
+70: 8007 (86ff)		:	       LDAA  #$FF    * CONFIG TODO EL PUERTO  G COMO SALIDAS
+
+71: 8009 (B71003)		:	       STAA  DDRG    * EL PUERTO G 
+
+72: 		:	
+
+73: 800c (8600)		:	       LDAA  #$00    * SE PONE PUERTO G EN CEROS
+
+74: 800e (B71002)		:	       STAA  PORTG
+
+75: 		:	       
+
+76: 8011 (CC302c)		:	       LDD   #$302C  * CONFIGURA PUERTO SERIAL
+
+77: 8014 (B7102b)		:	       STAA  BAUD    * BAUD  9600  para cristal de 8MHz
+
+78: 8017 (F7102d)		:	       STAB  SCCR2   * HABILITA  RX Y TX PERO INTERRUPCN SOLO RX
+
+79: 801a (8600)		:	       LDAA  #$00
+
+80: 801c (B7102c)		:	       STAA  SCCR1   * 8 BITS
+
+81: 		:	
+
+82: 801f (86fe)		:	       LDAA  #$FE    * CONFIG PUERTO D COMO SALIDAS (EXCEPTO PD0)
+
+83: 8021 (B71009)		:	       STAA  DDRD    * SEA  ENABLE DEL DISPLAY  PD4  Y RS PD3
+
+84: 		:	                     
+
+85: 		:	      
+
+86: 8024 (8604)		:	       LDAA  #$04
+
+87: 8026 (B7103c)		:	       STAA  HPRIO
+
+88: 		:	
+
+89: 8029 (8600)		:	       LDAA  #$00
+
+90: 802b (06)		:	       TAP
+
+91: 		:	
+
+92: 		:	
+
+93: 		:	
+
+94: 		:	       
+
+95: 		:	
+
+96: 		:	
+
+97: 		:	
+
+98: 		:	**********************************
+
+99: 		:	*PROGRAMA PRINCIPAL
+
+100: 		:	**********************************
+
+101: 		:	MAIN
+
+102: 		:	
+
+103: 		:	INICIO  
+
+104: 802c (BD80cd)		:		   JSR INICIA 
+
+105: 802f (7F000e)		:		   CLR U1
+
+106: 8032 (7F000f)		:		   CLR U2
+
+107: 8035 (7F0010)		:		   CLR U3
+
+108: 8038 (7F0011)		:		   CLR U4 
+
+109: 		:	
+
+110: 		:	ENCICLATE
+
+111: 803b (863f)		:	           LDAA #$3F
+
+112: 803d (970c)		:		   STAA ORDEN
+
+113: 		:	           
+
+114: 		:	CICLO
+
+115: 803f (960c)		:		   LDAA ORDEN
+
+116: 8041 (813f)		:		   CMPA #$3F
+
+117: 8043 (27fa)		:		   BEQ CICLO
+
+118: 8045 (D60e)		:	 	   LDAB U1
+
+119: 8047 (260b)		:		   BNE CHECA_U2
+
+120: 		:	COMPARA
+
+121: 8049 (8153)		:		   CMPA #'S
+
+122: 804b (26ee)		:		   BNE ENCICLATE 
+
+123: 804d (8653)		:	           LDAA #'S
+
+124: 804f (970e)		:		   STAA U1
+
+125: 8051 (7E803b)		:		   JMP ENCICLATE 
+
+126: 		:	CHECA_U2
+
+127: 8054 (D60f)		:		   LDAB U2 
+
+128: 8056 (2611)		:		   BNE CHECA_U3
+
+129: 8058 (8154)		:	           CMPA #'T
+
+130: 805a (2607)		:		   BNE NO_ES_T
+
+131: 805c (8654)		:		   LDAA #'T
+
+132: 805e (970f)		:		   STAA U2
+
+133: 8060 (7E803b)		:		   JMP ENCICLATE
+
+134: 		:	NO_ES_T
+
+135: 8063 (7F000e)		:		   CLR U1
+
+136: 8066 (7E8049)		:		   JMP COMPARA
+
+137: 		:		   
+
+138: 		:	CHECA_U3
+
+139: 8069 (D610)		:		   LDAB U3
+
+140: 806b (2611)		:		   BNE CHECA_U4
+
+141: 806d (8141)		:		   CMPA #'A
+
+142: 806f (2607)		:		   BNE NO_ES_A
+
+143: 8071 (8641)		:		   LDAA #'A
+
+144: 8073 (9710)		:		   STAA U3
+
+145: 8075 (7E803b)		:		   JMP ENCICLATE
+
+146: 		:	NO_ES_A
+
+147: 8078 (7F000f)		:		   CLR U2
+
+148: 807b (7E8063)		:		   JMP NO_ES_T
+
+149: 		:	CHECA_U4
+
+150: 		:	
+
+151: 807e (D611)		:		   LDAB U4
+
+152: 8080 (2611)		:	           BNE SALTE
+
+153: 8082 (8152)		:		   CMPA #'R
+
+154: 8084 (2607)		:		   BNE NO_ES_R
+
+155: 8086 (8652)		:		   LDAA #'R
+
+156: 8088 (9711)		:		   STAA U4
+
+157: 808a (7E803b)		:		   JMP ENCICLATE
+
+158: 		:	NO_ES_R
+
+159: 808d (7F0010)		:		   CLR U3
+
+160: 8090 (7E8078)		:		   JMP NO_ES_A
+
+161: 		:	SALTE
+
+162: 8093 (8154)		:		   CMPA #'T
+
+163: 8095 (2603)		:	           BNE NO_FUE_T
+
+164: 8097 (7E80a0)		:		   JMP SUBRUTINA
+
+165: 		:		   
+
+166: 		:	NO_FUE_T
+
+167: 809a (7F0011)		:		   CLR U4
+
+168: 809d (7E808d)		:	           JMP NO_ES_R
+
+169: 		:	SUBRUTINA
+
+170: 		:		   
+
+171: 		:	
+
+172: 80a0 (7F000e)		:	        CLR U1
+
+173: 80a3 (7F001f)		:		CLR EXTRA
+
+174: 80a6 (CE20)		:		LDX #EJECUTA
+
+175: 		:	LOOP
+
+176: 80a8 (961f)		:		LDAA EXTRA
+
+177: 80aa (27fc)		:		BEQ LOOP
+
+178: 		:	 
+
+179: 80ac (7F001f)		:		CLR EXTRA
+
+180: 80af (960c)		:		LDAA ORDEN
+
+181: 80b1 (8145)		:		CMPA #'E
+
+182: 80b3 (2709)		:		BEQ FUE_E
+
+183: 80b5 (7F000e)		:		CLR U1
+
+184: 		:	GUARDA
+
+185: 80b8 (A700)		:		STAA $00,X
+
+186: 80ba (08)		:		INX
+
+187: 80bb (7E80a8)		:		JMP LOOP
+
+188: 		:	FUE_E
+
+189: 80be (7C000e)		:		INC U1
+
+190: 80c1 (D60e)		:		LDAB U1
+
+191: 80c3 (C104)		:		CMPB #$04
+
+192: 80c5 (2703)		:		BEQ EJECUTALO
+
+193: 80c7 (7E80b8)		:		JMP GUARDA
+
+194: 		:	
+
+195: 		:	EJECUTALO
+
+196: 80ca (7E0020)		:	        JMP EJECUTA
+
+197: 		:	
+
+198: 		:	
+
+199: 		:	
+
+200: 		:	
+
+201: 		:	        
+
+202: 		:	
+
+203: 		:	
+
+204: 		:	***********************************
+
+205: 		:	* INICIA
+
+206: 		:	***********************************
+
+207: 		:	INICIA
+
+208: 		:	     
+
+209: 80cd (7F000d)		:	      CLR  SEG
+
+210: 		:	
+
+211: 80d0 (7F1002)		:	      CLR  PORTG
+
+212: 80d3 (86f4)		:	      LDAA #$F4         
+
+213: 80d5 (9718)		:	      STAA TEMPO         * TEMPO ES VARIABLE PARA CONTAR 244 CICLOS
+
+214: 		:	
+
+215: 80d7 (CE1024)		:	      LDX #TMSK2
+
+216: 80da (1C0040)		:	      BSET $00,X,#$40    * HABILITA INTERRUPCION TIMER T-REAL
+
+217: 80dd (0E)		:	      CLI
+
+218: 		:	
+
+219: 80de (CE1026)		:	      LDX #PACTL
+
+220: 80e1 (1C0050)		:	      BSET $00,X,#$50    * HABILITA PAEN -ACUMULADOR PULSOS ALTOS-
+
+221: 80e4 (7F1027)		:	      CLR PACNT          * BORRA ACUMULADOR DE PULSOS
+
+222: 		:	
+
+223: 80e7 (8610)		:	      LDAA #$10
+
+224: 80e9 (971b)		:	      STAA BASE_H        * PONE UN #1060 COMO DIRECCION BASE INICIAL
+
+225: 80eb (8660)		:	      LDAA #$60
+
+226: 80ed (971c)		:	      STAA BASE_L    
+
+227: 		:	      
+
+228: 80ef (18CE1060)		:	      LDY  #$1060      
+
+229: 		:	      
+
+230: 80f3 (8616)		:	      LDAA #$16
+
+231: 80f5 (9715)		:	      STAA BAS_H        * PONE UN #1653 NUMERO TOTAL DE JUEGO DE MUESTRAS
+
+232: 80f7 (8653)		:	      LDAA #$53
+
+233: 80f9 (9716)		:	      STAA BAS_L   
+
+234: 		:	
+
+235: 		:	
+
+236: 80fb (7F0019)		:	      CLR  ALTO          * INICIA INDICE MUESTRA EN 0
+
+237: 80fe (7F001a)		:	      CLR  BAJO
+
+238: 		:	
+
+239: 8101 (39)		:	       RTS
+
+240: 		:	***********************************
+
+241: 		:	* SACA
+
+242: 		:	***********************************
+
+243: 		:	SACA
+
+244: 		:	            
+
+245: 		:	       
+
+246: 8102 (9619)		:	       LDAA  ALTO         * INDICE DE MUESTRA (SEGUNDO)
+
+247: 8104 (D61a)		:	       LDAB  BAJO
+
+248: 8106 (0		:	       xgdy
+
+249: 8106 (1808)		:	       INY
+
+250: 8108 (0		:	       XGDY
+
+251: 8108 (BD8240)		:	       JSR   BINBCD
+
+252: 810b (BD8175)		:	       JSR   DISPLAY
+
+253: 810e (BD8165)		:	       JSR   COMA
+
+254: 		:	 
+
+255: 8111 (961b)		:	       LDAA  BASE_H       * INDICE DE MUESTRA (PARTICULAR)
+
+256: 8113 (D61c)		:	       LDAB  BASE_L
+
+257: 8115 (0		:	       XGDY
+
+258: 		:	       
+
+259: 8115 (1808)		:	       INY
+
+260: 8117 (4F)		:	       CLRA
+
+261: 8118 (18E600)		:	       LDAB  $00,Y  
+
+262: 811b (BD8250)		:	       JSR   BNBCD
+
+263: 811e (BD8194)		:	       JSR   DSPLY
+
+264: 8121 (BD8165)		:	       JSR   COMA
+
+265: 		:	
+
+266: 8124 (1808)		:	       INY
+
+267: 8126 (4F)		:	       CLRA
+
+268: 8127 (18E600)		:	       LDAB  $00,Y
+
+269: 812a (BD8250)		:	       JSR   BNBCD
+
+270: 812d (BD8194)		:	       JSR   DSPLY
+
+271: 8130 (BD8165)		:	       JSR   COMA
+
+272: 		:	
+
+273: 8133 (1808)		:	       INY
+
+274: 8135 (4F)		:	       CLRA
+
+275: 8136 (18E600)		:	       LDAB  $00,Y
+
+276: 8139 (BD8250)		:	       JSR   BNBCD
+
+277: 813c (BD8194)		:	       JSR   DSPLY
+
+278: 813f (BD8165)		:	       JSR   COMA
+
+279: 		:	
+
+280: 8142 (1808)		:	       INY
+
+281: 8144 (4F)		:	       CLRA
+
+282: 8145 (18E600)		:	       LDAB  $00,Y
+
+283: 8148 (BD8250)		:	       JSR   BNBCD
+
+284: 814b (BD8194)		:	       JSR   DSPLY
+
+285: 814e (BD8165)		:	       JSR   COMA
+
+286: 		:	 
+
+287: 8151 (1808)		:	       INY
+
+288: 8153 (4F)		:	       CLRA 
+
+289: 8154 (18E600)		:	       LDAB  $00,Y
+
+290: 8157 (BD8250)		:	       JSR   BNBCD
+
+291: 815a (BD8194)		:	       JSR   DSPLY
+
+292: 		:	       
+
+293: 815d (0		:	       XGDY
+
+294: 815d (971b)		:	       STAA BASE_H
+
+295: 815f (D71c)		:	       STAB BASE_L
+
+296: 		:	
+
+297: 8161 (BD81c2)		:	       JSR   CRYTRN
+
+298: 		:	
+
+299: 8164 (39)		:	       RTS
+
+300: 		:	***********************************
+
+301: 		:	* COMA
+
+302: 		:	***********************************
+
+303: 		:	COMA
+
+304: 8165 (CE102e)		:	       LDX   #SCSR 
+
+305: 		:	       
+
+306: 8168 (B6102e)		:	       LDAA  SCSR
+
+307: 816b (862c)		:	       LDAA  #$2C             * COMA
+
+308: 816d (B7102f)		:	       STAA  SCDR
+
+309: 		:	C1
+
+310: 8170 (1F0080fc)		:	       BRCLR $00,X,#$80 C1 
+
+311: 8174 (39)		:	       RTS
+
+312: 		:	***********************************
+
+313: 		:	* DESPLIEGA
+
+314: 		:	***********************************
+
+315: 		:	DISPLAY
+
+316: 		:	       
+
+317: 8175 (CE102e)		:	       LDX   #SCSR 
+
+318: 		:	       
+
+319: 8178 (B6102e)		:	       LDAA  SCSR
+
+320: 817b (960e)		:	       LDAA  U1             * U1
+
+321: 817d (8B30)		:	       ADDA  #$30
+
+322: 817f (B7102f)		:	       STAA  SCDR
+
+323: 		:	T1
+
+324: 8182 (1F0080fc)		:	       BRCLR $00,X,#$80 T1 
+
+325: 		:	      
+
+326: 8186 (B6102e)		:	       LDAA  SCSR
+
+327: 8189 (960f)		:	       LDAA  U2             * U2
+
+328: 818b (8B30)		:	       ADDA  #$30
+
+329: 818d (B7102f)		:	       STAA  SCDR
+
+330: 		:	T2
+
+331: 8190 (1F0080fc)		:	       BRCLR $00,X,#$80 T2 
+
+332: 		:	
+
+333: 		:	DSPLY  
+
+334: 8194 (CE102e)		:	       LDX   #SCSR
+
+335: 		:	    
+
+336: 8197 (B6102e)		:	       LDAA SCSR
+
+337: 819a (9610)		:	       LDAA  U3             * U3
+
+338: 819c (8B30)		:	       ADDA  #$30
+
+339: 819e (B7102f)		:	       STAA  SCDR
+
+340: 		:	T3
+
+341: 81a1 (1F0080fc)		:	       BRCLR $00,X,#$80 T3 
+
+342: 		:	      
+
+343: 81a5 (B6102e)		:	       LDAA SCSR 
+
+344: 81a8 (9611)		:	       LDAA  U4             * U4
+
+345: 81aa (8B30)		:	       ADDA  #$30
+
+346: 81ac (B7102f)		:	       STAA  SCDR
+
+347: 		:	T4
+
+348: 81af (1F0080fc)		:	       BRCLR $00,X,#$80 T4 
+
+349: 		:	   
+
+350: 81b3 (B6102e)		:	       LDAA SCSR
+
+351: 81b6 (9612)		:	       LDAA  U5             * U5
+
+352: 81b8 (8B30)		:	       ADDA  #$30
+
+353: 81ba (B7102f)		:	       STAA  SCDR
+
+354: 		:	T5
+
+355: 81bd (1F0080fc)		:	       BRCLR $00,X,#$80 T5  
+
+356: 		:	       
+
+357: 81c1 (39)		:	       RTS
+
+358: 		:	
+
+359: 		:	***********************************
+
+360: 		:	* CARRY RETURN
+
+361: 		:	***********************************
+
+362: 		:	
+
+363: 		:	CRYTRN
+
+364: 81c2 (CE102e)		:	       LDX   #SCSR 
+
+365: 81c5 (B6102e)		:	       LDAA  SCSR
+
+366: 81c8 (860a)		:	       LDAA  #$0A             * NEW LINE     
+
+367: 81ca (B7102f)		:	       STAA  SCDR
+
+368: 		:	CR1
+
+369: 81cd (1F0080fc)		:	       BRCLR $00,X,#$80 CR1        
+
+370: 		:	
+
+371: 81d1 (B6102e)		:	       LDAA SCSR
+
+372: 81d4 (860d)		:	       LDAA #$0D              * CARRY RETURN     
+
+373: 81d6 (B7102f)		:	       STAA SCDR
+
+374: 		:	CR2
+
+375: 81d9 (1F0080fc)		:	       BRCLR $00,X,#$80 CR2        
+
+376: 		:	
+
+377: 81dd (39)		:	       RTS
+
+378: 		:	***********************************
+
+379: 		:	*  DESPLIEGUE DE DATO RECIBIDO
+
+380: 		:	***********************************
+
+381: 		:	
+
+382: 		:	DATARX
+
+383: 81de (CE102e)		:	       LDX   #SCSR 
+
+384: 81e1 (B6102e)		:	       LDAA  SCSR
+
+385: 81e4 (960c)		:	       LDAA  ORDEN             * NEW LINE     
+
+386: 81e6 (B7102f)		:	       STAA  SCDR
+
+387: 		:	DT1
+
+388: 81e9 (1F0080fc)		:	       BRCLR $00,X,#$80 DT1        
+
+389: 		:	
+
+390: 81ed (B6102e)		:	       LDAA SCSR 
+
+391: 81f0 (863a)		:	       LDAA #$3A              * DOS PUNTOS    
+
+392: 81f2 (B7102f)		:	       STAA SCDR
+
+393: 		:	DT2
+
+394: 81f5 (1F0080fc)		:	       BRCLR $00,X,#$80 DT2        
+
+395: 		:	
+
+396: 81f9 (39)		:	       RTS
+
+397: 		:	***********************************
+
+398: 		:	* voltimetro
+
+399: 		:	***********************************
+
+400: 		:	VOLTA
+
+401: 81fa (CE1030)		:	      LDX #ADCTL      
+
+402: 		:	
+
+403: 81fd (8680)		:	      LDAA #$80
+
+404: 81ff (B71039)		:	      STAA OPTION        * PONE EN MARCHA EL ADC
+
+405: 		:	    
+
+406: 8202 (8610)		:	      LDAA #$10
+
+407: 8204 (B71030)		:	      STAA ADCTL         * ENTRADA MULTIPLE SELECCIONA CANAL 0
+
+408: 		:	
+
+409: 		:	E1
+
+410: 8207 (1F0080fc)		:	      BRCLR $00,X,#$80 E1  
+
+411: 820b (F61031)		:	      LDAB ADR1
+
+412: 820e (D713)		:	      STAB V1
+
+413: 		:	      
+
+414: 8210 (8680)		:	      LDAA #$80
+
+415: 8212 (B71039)		:	      STAA OPTION        * PONE EN MARCHA EL ADC
+
+416: 		:	    
+
+417: 8215 (8611)		:	      LDAA #$11
+
+418: 8217 (B71030)		:	      STAA ADCTL         * ENTRADA MULTIPLE SELECCIONA CANAL 1
+
+419: 		:	
+
+420: 		:	E2
+
+421: 821a (1F0080fc)		:	      BRCLR $00,X,#$80 E2  
+
+422: 821e (F61032)		:	      LDAB ADR2
+
+423: 8221 (D714)		:	      STAB V2
+
+424: 		:	     
+
+425: 8223 (8612)		:	      LDAA #$12
+
+426: 8225 (B71030)		:	      STAA ADCTL         * ENTRADA MULTIPLE SELECCIONA CANAL 2
+
+427: 		:	
+
+428: 		:	E3
+
+429: 8228 (1F0080fc)		:	      BRCLR $00,X,#$80 E3  
+
+430: 822c (F61033)		:	      LDAB ADR3
+
+431: 822f (D71d)		:	      STAB V3 
+
+432: 		:	
+
+433: 8231 (8613)		:	      LDAA #$13
+
+434: 8233 (B71030)		:	      STAA ADCTL         * ENTRADA MULTIPLE SELECCIONA CANAL 3
+
+435: 		:	
+
+436: 		:	E4
+
+437: 8236 (1F0080fc)		:	      BRCLR $00,X,#$80 E4  
+
+438: 823a (F61034)		:	      LDAB ADR4
+
+439: 823d (D71e)		:	      STAB V4
+
+440: 		:	
+
+441: 		:	           
+
+442: 823f (39)		:	      RTS
+
+443: 		:	***********************************
+
+444: 		:	* CONVIERTE A BCD
+
+445: 		:	***********************************
+
+446: 		:	
+
+447: 		:	BINBCD
+
+448: 		:	     
+
+449: 8240 (CE2710)		:	      LDX  #$2710
+
+450: 8243 (02)		:	      IDIV 
+
+451: 8244 (8F)		:	      XGDX
+
+452: 8245 (D70e)		:	      STAB U1
+
+453: 8247 (8F)		:	      XGDX
+
+454: 8248 (CE03e8)		:	      LDX  #$3E8
+
+455: 824b (02)		:	      IDIV
+
+456: 824c (8F)		:	      XGDX
+
+457: 824d (D70f)		:	      STAB U2
+
+458: 824f (8F)		:	      XGDX
+
+459: 		:	
+
+460: 		:	BNBCD
+
+461: 8250 (CE64)		:	      LDX  #$64
+
+462: 8252 (02)		:	      IDIV
+
+463: 8253 (8F)		:	      XGDX
+
+464: 8254 (D710)		:	      STAB U3
+
+465: 8256 (8F)		:	      XGDX
+
+466: 8257 (CE0a)		:	      LDX  #$A
+
+467: 8259 (02)		:	      IDIV
+
+468: 825a (8F)		:	      XGDX
+
+469: 825b (D711)		:	      STAB U4
+
+470: 825d (8F)		:	      XGDX
+
+471: 825e (D712)		:	      STAB U5
+
+472: 		:	
+
+473: 		:	
+
+474: 		:	
+
+475: 8260 (39)		:	      RTS
+
+476: 		:	
+
+477: 		:	
+
+478: 		:	
+
+479: 		:	***********************************
+
+480: 		:	* ATENCION A INTERRUPCION SERIAL
+
+481: 		:	***********************************
+
+482: 		:	       ORG  $F100
+
+483: 		:	  
+
+484: f100 (36)		:	       PSHA
+
+485: 		:	 
+
+486: f101 (B6102e)		:	       LDAA SCSR
+
+487: f104 (B6102f)		:	       LDAA SCDR
+
+488: f107 (970c)		:	       STAA ORDEN
+
+489: f109 (7A001f)		:	       DEC  EXTRA
+
+490: 		:	
+
+491: f10c (32)		:	       PULA  
+
+492: 		:	
+
+493: f10d (3B)		:	       RTI
+
+494: 		:	
+
+495: 		:	***********************************
+
+496: 		:	* ATENCION A INTERRUPCION REAL TIME
+
+497: 		:	***********************************
+
+498: 		:	      ORG  $F110
+
+499: 		:	
+
+500: f110 (36)		:	      PSHA
+
+501: f111 (3C)		:	      PSHX
+
+502: 		:	
+
+503: f112 (CE1025)		:	      LDX #TFLG2
+
+504: f115 (1C0040)		:	      BSET $00,X,#$40    * BORRA BANDERA INTERRUPCION
+
+505: f118 (7A0018)		:	      DEC TEMPO
+
+506: f11b (2703)		:	      BEQ SEGUNDO
+
+507: 		:	      
+
+508: f11d (32)		:	      PULA
+
+509: f11e (38)		:	      PULX
+
+510: f11f (3B)		:	      RTI
+
+511: 		:	
+
+512: 		:	SEGUNDO
+
+513: f120 (86ff)		:	      LDAA #$FF
+
+514: f122 (970d)		:	      STAA SEG           * SEG ES UNA BANDERA DE SEGUNDO    
+
+515: f124 (86f4)		:	      LDAA #$F4         
+
+516: f126 (9718)		:	      STAA TEMPO         * TEMPO ES VARIABLE PARA CONTAR 244 CICLOS
+
+517: f128 (7C1002)		:	      INC  PORTG
+
+518: 		:	     
+
+519: f12b (32)		:	      PULA
+
+520: f12c (38)		:	      PULX
+
+521: f12d (3B)		:	      RTI
+
+522: 		:	***********************************
+
+523: 		:	* VECTOR INTERRUPCION SERIAL
+
+524: 		:	***********************************
+
+525: 		:	       ORG   $FFD6
+
+526: 		:	       FCB   $F1,$00       
+
+527: 		:	
+
+528: 		:	***********************************
+
+529: 		:	* VECTOR INTERRUPCION REAL TIME
+
+530: 		:	***********************************
+
+531: 		:	       ORG   $FFF0
+
+532: 		:	       FCB   $F1,$10       
+
+533: 		:	
+
+534: 		:	***********************************
+
+535: 		:	*RESET
+
+536: 		:	***********************************
+
+537: 		:	       ORG    $FFFE
+
+538: 		:	RESET  FCB    $80,$00
+
+539: 		:	***********************************
+
+540: 		:	       END   $8000
+
+541: 		:	
+
